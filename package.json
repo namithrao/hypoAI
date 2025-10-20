@@ -1,0 +1,41 @@
+{
+  "name": "synthai",
+  "version": "1.0.0",
+  "description": "AI research companion for medical data retrieval, synthesis, and hypothesis testing",
+  "private": true,
+  "workspaces": [
+    "apps/frontend",
+    "apps/backend",
+    "apps/mcp-tools/nhanes",
+    "apps/mcp-tools/seer",
+    "apps/mcp-tools/physionet",
+    "packages/python-mcp",
+    "packages/schemas",
+    "packages/nhanes-dict"
+  ],
+  "scripts": {
+    "dev": "docker-compose up",
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "lint": "npm run lint --workspaces",
+    "clean": "npm run clean --workspaces && docker-compose down",
+    "setup": "npm install && npm run setup --workspaces"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "eslint": "^8.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "prettier": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/synthai.git"
+  },
+  "license": "MIT"
+}

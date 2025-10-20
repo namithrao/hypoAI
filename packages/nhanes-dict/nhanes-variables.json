@@ -1,0 +1,430 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "last_updated": "2024-01-15",
+    "description": "NHANES Variable Dictionary for SynthAI - Maps common research terms to NHANES variable codes",
+    "source": "CDC NHANES Data Documentation",
+    "cycles_covered": ["2015-2016", "2017-2018", "2019-2020"]
+  },
+  "categories": {
+    "demographics": {
+      "description": "Demographic variables including age, sex, race/ethnicity",
+      "variables": {
+        "sequence_number": {
+          "nhanes_code": "SEQN",
+          "label": "Respondent sequence number",
+          "description": "Unique identifier for each participant",
+          "data_type": "integer",
+          "component": "Demographics",
+          "cycles": ["2015-2016", "2017-2018", "2019-2020"],
+          "required_for_merge": true
+        },
+        "sex": {
+          "nhanes_code": "RIAGENDR",
+          "label": "Gender",
+          "description": "Sex of the participant",
+          "data_type": "categorical",
+          "values": {
+            "1": "Male",
+            "2": "Female"
+          },
+          "component": "Demographics",
+          "cycles": ["2015-2016", "2017-2018", "2019-2020"],
+          "aliases": ["gender"]
+        },
+        "age": {
+          "nhanes_code": "RIDAGEYR",
+          "label": "Age in years at screening",
+          "description": "Age of the participant in years at the time of screening",
+          "data_type": "continuous",
+          "unit": "years",
+          "range": [0, 80],
+          "component": "Demographics",
+          "cycles": ["2015-2016", "2017-2018", "2019-2020"],
+          "aliases": ["age_years"]
+        },
+        "race_ethnicity": {
+          "nhanes_code": "RIDRETH3",
+          "label": "Race/Hispanic origin w/ NH Asian",
+          "description": "Race and Hispanic origin information with Non-Hispanic Asian",
+          "data_type": "categorical",
+          "values": {
+            "1": "Mexican American",
+            "2": "Other Hispanic",
+            "3": "Non-Hispanic White",
+            "4": "Non-Hispanic Black",
+            "6": "Non-Hispanic Asian",
+            "7": "Other Race - Including Multi-Racial"
+          },
+          "component": "Demographics",
+          "cycles": ["2015-2016", "2017-2018", "2019-2020"],
+          "aliases": ["race", "ethnicity"]
+        },
+        "country_of_birth": {
+          "nhanes_code": "DMDBORN4",
+          "label": "Country of birth",
+          "description": "Country where participant was born",
+          "data_type": "categorical",
+          "values": {
+            "1": "Born in 50 US states or Washington, DC",
+            "2": "Born in Mexico",
+            "4": "Born in other country",
+            "77": "Refused",
+            "99": "Don't Know"
+          },
+          "component": "Demographics",
+          "cycles": ["2015-2016", "2017-2018", "2019-2020"]
+        }
+      }
+    },
+    "anthropometry": {
+      "description": "Body measurements including height, weight, BMI",
+      "variables": {
+        "bmi": {
+          "nhanes_code": "BMXBMI",
+          "label": "Body Mass Index (kg/m**2)",
+          "description": "Body Mass Index calculated from measured height and weight",
+          "data_type": "continuous",
+          "unit": "kg/m²",
+          "range": [12, 80],
+          "component": "Examination",
+          "cycles": ["2015-2016", "2017-2018", "2019-2020"],
+          "aliases": ["body_mass_index"]
+        },
+        "weight": {
+          "nhanes_code": "BMXWT",
+          "label": "Weight (kg)",
+          "description": "Weight in kilograms",
+          "data_type": "continuous",
+          "unit": "kg",
+          "range": [3, 200],
+          "component": "Examination",
+          "cycles": ["2015-2016", "2017-2018", "2019-2020"]
+        },
+        "height": {
+          "nhanes_code": "BMXHT",
+          "label": "Standing Height (cm)",
+          "description": "Standing height in centimeters",
+          "data_type": "continuous",
+          "unit": "cm",
+          "range": [80, 210],
+          "component": "Examination",
+          "cycles": ["2015-2016", "2017-2018", "2019-2020"]
+        },
+        "waist_circumference": {
+          "nhanes_code": "BMXWAIST",
+          "label": "Waist Circumference (cm)",
+          "description": "Waist circumference in centimeters",
+          "data_type": "continuous",
+          "unit": "cm",
+          "range": [40, 170],
+          "component": "Examination",
+          "cycles": ["2015-2016", "2017-2018", "2019-2020"]
+        }
+      }
+    },
+    "laboratory": {
+      "description": "Laboratory measurements including biomarkers and blood chemistry",
+      "variables": {
+        "crp": {
+          "nhanes_code": "LBXCRP",
+          "label": "C-reactive protein (mg/dL)",
+          "description": "C-reactive protein level in blood",
+          "data_type": "continuous",
+          "unit": "mg/dL",
+          "range": [0, 50],
+          "component": "Laboratory",
+          "cycles": ["2015-2016", "2017-2018", "2019-2020"],
+          "aliases": ["c_reactive_protein", "c-reactive_protein"],
+          "clinical_significance": "Marker of inflammation, cardiovascular risk"
+        },
+        "glucose": {
+          "nhanes_code": "LBXGLU",
+          "label": "Fasting Glucose (mg/dL)",
+          "description": "Fasting plasma glucose level",
+          "data_type": "continuous",
+          "unit": "mg/dL",
+          "range": [50, 500],
+          "component": "Laboratory",
+          "cycles": ["2015-2016", "2017-2018", "2019-2020"],
+          "aliases": ["fasting_glucose", "blood_glucose"],
+          "clinical_significance": "Diabetes screening and diagnosis"
+        },
+        "insulin": {
+          "nhanes_code": "LBXIN",
+          "label": "Insulin (μU/mL)",
+          "description": "Fasting insulin level",
+          "data_type": "continuous",
+          "unit": "μU/mL",
+          "range": [1, 300],
+          "component": "Laboratory",
+          "cycles": ["2015-2016", "2017-2018", "2019-2020"],
+          "aliases": ["fasting_insulin"],
+          "clinical_significance": "Insulin resistance assessment"
+        },
+        "hba1c": {
+          "nhanes_code": "LBXGH",
+          "label": "Glycohemoglobin (%)",
+          "description": "Hemoglobin A1c percentage",
+          "data_type": "continuous",
+          "unit": "%",
+          "range": [3, 20],
+          "component": "Laboratory",
+          "cycles": ["2015-2016", "2017-2018", "2019-2020"],
+          "aliases": ["hemoglobin_a1c", "a1c"],
+          "clinical_significance": "Long-term glucose control"
+        },
+        "total_cholesterol": {
+          "nhanes_code": "LBXTC",
+          "label": "Total cholesterol (mg/dL)",
+          "description": "Total cholesterol level",
+          "data_type": "continuous",
+          "unit": "mg/dL",
+          "range": [80, 500],
+          "component": "Laboratory",
+          "cycles": ["2015-2016", "2017-2018", "2019-2020"],
+          "aliases": ["cholesterol"],
+          "clinical_significance": "Cardiovascular risk assessment"
+        },
+        "hdl_cholesterol": {
+          "nhanes_code": "LBDHDD",
+          "label": "Direct HDL-Cholesterol (mg/dL)",
+          "description": "High-density lipoprotein cholesterol",
+          "data_type": "continuous",
+          "unit": "mg/dL",
+          "range": [10, 150],
+          "component": "Laboratory",
+          "cycles": ["2015-2016", "2017-2018", "2019-2020"],
+          "aliases": ["hdl"],
+          "clinical_significance": "Protective cholesterol"
+        },
+        "ldl_cholesterol": {
+          "nhanes_code": "LBDLDL",
+          "label": "LDL-cholesterol (mg/dL)",
+          "description": "Low-density lipoprotein cholesterol (calculated)",
+          "data_type": "continuous",
+          "unit": "mg/dL",
+          "range": [20, 300],
+          "component": "Laboratory",
+          "cycles": ["2015-2016", "2017-2018", "2019-2020"],
+          "aliases": ["ldl"],
+          "clinical_significance": "'Bad' cholesterol"
+        },
+        "triglycerides": {
+          "nhanes_code": "LBXTR",
+          "label": "Triglyceride (mg/dL)",
+          "description": "Triglyceride level",
+          "data_type": "continuous",
+          "unit": "mg/dL",
+          "range": [20, 2000],
+          "component": "Laboratory",
+          "cycles": ["2015-2016", "2017-2018", "2019-2020"],
+          "clinical_significance": "Cardiovascular and metabolic risk"
+        }
+      }
+    },
+    "blood_pressure": {
+      "description": "Blood pressure measurements",
+      "variables": {
+        "systolic_bp": {
+          "nhanes_code": "BPXSY1",
+          "label": "Systolic: Blood pres (1st rdg) mm Hg",
+          "description": "Systolic blood pressure (first reading)",
+          "data_type": "continuous",
+          "unit": "mm Hg",
+          "range": [70, 250],
+          "component": "Examination",
+          "cycles": ["2015-2016", "2017-2018", "2019-2020"],
+          "aliases": ["systolic", "sbp"]
+        },
+        "diastolic_bp": {
+          "nhanes_code": "BPXDI1",
+          "label": "Diastolic: Blood pres (1st rdg) mm Hg",
+          "description": "Diastolic blood pressure (first reading)",
+          "data_type": "continuous",
+          "unit": "mm Hg",
+          "range": [30, 140],
+          "component": "Examination",
+          "cycles": ["2015-2016", "2017-2018", "2019-2020"],
+          "aliases": ["diastolic", "dbp"]
+        }
+      }
+    },
+    "lifestyle": {
+      "description": "Lifestyle and behavioral variables",
+      "variables": {
+        "smoking": {
+          "nhanes_code": "SMQ020",
+          "label": "Smoked at least 100 cigarettes in life",
+          "description": "Whether participant has smoked at least 100 cigarettes in entire life",
+          "data_type": "categorical",
+          "values": {
+            "1": "Yes",
+            "2": "No",
+            "7": "Refused",
+            "9": "Don't know"
+          },
+          "component": "Questionnaire",
+          "cycles": ["2015-2016", "2017-2018", "2019-2020"],
+          "aliases": ["smoking_history", "ever_smoked"]
+        },
+        "alcohol_use": {
+          "nhanes_code": "ALQ101",
+          "label": "Had at least 12 alcohol drinks/1 yr?",
+          "description": "Had at least 12 alcohol drinks in any one year",
+          "data_type": "categorical",
+          "values": {
+            "1": "Yes",
+            "2": "No",
+            "7": "Refused",
+            "9": "Don't know"
+          },
+          "component": "Questionnaire",
+          "cycles": ["2015-2016", "2017-2018", "2019-2020"],
+          "aliases": ["alcohol_history"]
+        },
+        "physical_activity": {
+          "nhanes_code": "PAQ605",
+          "label": "Vigorous work activity",
+          "description": "Vigorous-intensity work activity",
+          "data_type": "categorical",
+          "values": {
+            "1": "Yes",
+            "2": "No",
+            "7": "Refused",
+            "9": "Don't know"
+          },
+          "component": "Questionnaire",
+          "cycles": ["2015-2016", "2017-2018", "2019-2020"],
+          "aliases": ["vigorous_activity", "exercise"]
+        }
+      }
+    },
+    "medical_conditions": {
+      "description": "Self-reported medical conditions and diagnoses",
+      "variables": {
+        "diabetes": {
+          "nhanes_code": "DIQ010",
+          "label": "Doctor told you have diabetes",
+          "description": "Doctor ever told you that you have diabetes or sugar diabetes",
+          "data_type": "categorical",
+          "values": {
+            "1": "Yes",
+            "2": "No",
+            "3": "Borderline",
+            "7": "Refused",
+            "9": "Don't know"
+          },
+          "component": "Questionnaire",
+          "cycles": ["2015-2016", "2017-2018", "2019-2020"],
+          "aliases": ["diabetes_diagnosis"]
+        },
+        "hypertension": {
+          "nhanes_code": "BPQ020",
+          "label": "Ever told you had high blood pressure",
+          "description": "Ever told by a doctor or health professional that you had high blood pressure or hypertension",
+          "data_type": "categorical",
+          "values": {
+            "1": "Yes",
+            "2": "No",
+            "7": "Refused",
+            "9": "Don't know"
+          },
+          "component": "Questionnaire",
+          "cycles": ["2015-2016", "2017-2018", "2019-2020"],
+          "aliases": ["high_blood_pressure", "htn"]
+        },
+        "heart_disease": {
+          "nhanes_code": "MCQ160C",
+          "label": "Ever told you had coronary heart disease",
+          "description": "Ever told by a doctor or health professional that you had coronary heart disease",
+          "data_type": "categorical",
+          "values": {
+            "1": "Yes",
+            "2": "No",
+            "7": "Refused",
+            "9": "Don't know"
+          },
+          "component": "Questionnaire",
+          "cycles": ["2015-2016", "2017-2018", "2019-2020"],
+          "aliases": ["coronary_heart_disease", "chd"]
+        },
+        "stroke": {
+          "nhanes_code": "MCQ160F",
+          "label": "Ever told you had a stroke",
+          "description": "Ever told by a doctor or health professional that you had a stroke",
+          "data_type": "categorical",
+          "values": {
+            "1": "Yes",
+            "2": "No",
+            "7": "Refused",
+            "9": "Don't know"
+          },
+          "component": "Questionnaire",
+          "cycles": ["2015-2016", "2017-2018", "2019-2020"],
+          "aliases": ["stroke_history"]
+        }
+      }
+    }
+  },
+  "common_research_mappings": {
+    "cardiovascular_risk": {
+      "description": "Variables commonly used in cardiovascular risk research",
+      "variables": [
+        "age", "sex", "race_ethnicity", "bmi", "systolic_bp", "diastolic_bp",
+        "total_cholesterol", "hdl_cholesterol", "ldl_cholesterol", "smoking",
+        "diabetes", "hypertension"
+      ]
+    },
+    "metabolic_syndrome": {
+      "description": "Variables for metabolic syndrome assessment",
+      "variables": [
+        "waist_circumference", "triglycerides", "hdl_cholesterol",
+        "systolic_bp", "diastolic_bp", "glucose"
+      ]
+    },
+    "inflammation": {
+      "description": "Inflammatory markers and related variables",
+      "variables": [
+        "crp", "age", "sex", "bmi", "smoking", "physical_activity"
+      ]
+    },
+    "diabetes_research": {
+      "description": "Variables commonly used in diabetes research",
+      "variables": [
+        "glucose", "insulin", "hba1c", "bmi", "age", "race_ethnicity",
+        "diabetes", "physical_activity"
+      ]
+    }
+  },
+  "data_files_by_component": {
+    "Demographics": {
+      "file_prefix": "DEMO",
+      "cycles": {
+        "2015-2016": "DEMO_I",
+        "2017-2018": "DEMO_J",
+        "2019-2020": "DEMO_K"
+      }
+    },
+    "Examination": {
+      "file_prefix": "BMX",
+      "cycles": {
+        "2015-2016": "BMX_I",
+        "2017-2018": "BMX_J",
+        "2019-2020": "BMX_K"
+      }
+    },
+    "Laboratory": {
+      "file_prefix": "LAB",
+      "cycles": {
+        "2015-2016": "LAB25_I",
+        "2017-2018": "LAB25_J",
+        "2019-2020": "LAB25_K"
+      }
+    },
+    "Questionnaire": {
+      "file_prefix": "Q",
+      "description": "Various questionnaire components with different prefixes"
+    }
+  }
+}
