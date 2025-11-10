@@ -1,24 +1,22 @@
 """
-Multi-agent medical research system.
+Literature Discovery Agent for SynthAI MVP.
 
-Agents:
-1. Research Planner - Parses hypotheses into structured research plans
-2. Literature Review - Searches PubMed/OpenAlex for evidence
-3. Data Sourcing - Discovers NHANES variables dynamically
-4. Dataset Builder - Harmonizes and joins multi-cycle data
-5. Synthetic Data Engine - Augments data with UMAP+VAE
-6. Statistical Analysis - Runs models and generates explanations
-7. Report Generation - Creates publication-ready outputs
+Simplified single-agent architecture:
+- Literature Discovery Agent V2: Claude + BlueBERT for variable discovery from research papers
+
+Legacy agents (commented out for MVP):
+- Research Planner, Literature Review, Data Sourcing, Dataset Builder (to be removed)
 """
 
-from .research_planner import ResearchPlannerAgent
-from .literature_review import LiteratureReviewAgent
-from .data_sourcing import DataSourcingAgent
-from .dataset_builder import DatasetBuilderAgent
+# MVP Implementation
+from .literature_discovery_agent_v2 import LiteratureDiscoveryAgentV2
+
+# Legacy agents (commented out)
+# from .research_planner import ResearchPlannerAgent
+# from .literature_review import LiteratureReviewAgent
+# from .data_sourcing import DataSourcingAgent
+# from .dataset_builder import DatasetBuilderAgent
 
 __all__ = [
-    "ResearchPlannerAgent",
-    "LiteratureReviewAgent",
-    "DataSourcingAgent",
-    "DatasetBuilderAgent",
+    "LiteratureDiscoveryAgentV2",
 ]

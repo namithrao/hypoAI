@@ -192,25 +192,41 @@ async def health_check():
     }
 
 
-# New Multi-Agent Literature Endpoint
+# New Literature Discovery Endpoint with Dual Output
 class LiteratureRequest(BaseModel):
-    question: str = Field(..., min_length=10, max_length=1000)
-    max_papers: int = Field(default=5, ge=1, le=20)
+    hypothesis: str = Field(..., min_length=10, max_length=1000, description="Research hypothesis")
+    min_variables: int = Field(default=10, ge=1, le=50, description="Minimum variables to find (adaptive stopping)")
+    max_papers: int = Field(default=20, ge=1, le=50, description="Maximum papers to analyze")
+    max_iterations: int = Field(default=3, ge=1, le=5, description="Maximum search iterations")
 
 
-@app.post("/api/literature")
-async def analyze_literature(request: LiteratureRequest):
+class LiteratureResponse(BaseModel):
+    success: bool
+    synthesis_input: Dict[str, Any]  # For generator
+    literature_display: Dict[str, Any]  # For frontend
+
+
+@app.post("/api/literature", response_model=LiteratureResponse)
+async def discover_variables(request: LiteratureRequest):
     """
-    Literature discovery using new multi-agent system.
+    Literature discovery agent with dual output system.
 
-    Searches PubMed, analyzes papers, finds genes/variants, generates hypotheses.
+    Returns:
+    - synthesis_input: Minimal data for synthesis generator (variables, correlations)
+    - literature_display: Full paper metadata for frontend display (papers, abstracts, full text)
+
+    Uses:
+    - Claude Haiku 4.5 for fast analysis
+    - NCBI E-utilities for PubMed/PMC access
+    - XML-based prompts for reliable parsing
+    - Adaptive stopping when min_variables reached
     """
     try:
-        logger.info(f"Literature analysis: {request.question}")
+        logger.info(f"Literature discovery: {request.hypothesis}")
 
         # Import here to avoid issues if not yet initialized
         from anthropic import AsyncAnthropic
-        from .agents.literature_agent import LiteratureDiscoveryAgent
+        from .agents.literature_discovery_agent_v2 import LiteratureDiscoveryAgentV2
 
         # Create clients
         if not settings.anthropic_api_key:
@@ -218,40 +234,33 @@ async def analyze_literature(request: LiteratureRequest):
 
         anthropic_client = AsyncAnthropic(api_key=settings.anthropic_api_key)
 
-        # Create agent (using orchestrator's MCP client if available)
-        mcp_client = orchestrator.nhanes_client if orchestrator else None
-
-        agent = LiteratureDiscoveryAgent(
-            ncbi_client=mcp_client,
+        # Create agent (no need for MCP client, uses direct HTTP)
+        agent = LiteratureDiscoveryAgentV2(
+            ncbi_client=None,  # Not used, agent uses direct HTTP
             anthropic_client=anthropic_client,
+            ncbi_api_key=settings.ncbi_api_key  # Pass NCBI API key for 10 req/s limit
         )
 
-        # Run analysis
-        results = await agent.analyze(
-            hypothesis=request.question,
-            max_papers=request.max_papers
+        # Run discovery - returns tuple of (synthesis_input, literature_display)
+        synthesis_input, literature_display = await agent.discover_variables(
+            hypothesis=request.hypothesis,
+            min_variables=request.min_variables,
+            max_papers=request.max_papers,
+            max_iterations=request.max_iterations
         )
 
-        return {
-            "success": True,
-            "papers_analyzed": results.get('papers_analyzed', 0),
-            "variables_found": results.get('all_variables', []),
-            "genes_found": results.get('all_genes', []),
-            "variants_found": results.get('all_variants', []),
-            "novel_hypotheses": results.get('synthesis', {}).get('novel_hypotheses', []),
-            "patterns": results.get('synthesis', {}).get('patterns', []),
-            "research_gaps": results.get('synthesis', {}).get('research_gaps', []),
-        }
+        return LiteratureResponse(
+            success=True,
+            synthesis_input=synthesis_input,
+            literature_display=literature_display
+        )
 
     except Exception as e:
-        logger.error(f"Literature analysis failed: {str(e)}", exc_info=True)
-        return {
-            "success": False,
-            "error": str(e),
-            "papers_analyzed": 0,
-            "variables_found": [],
-            "genes_found": [],
-        }
+        logger.error(f"Literature discovery failed: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Literature discovery failed: {str(e)}"
+        )
 
 
 if __name__ == "__main__":

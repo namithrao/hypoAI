@@ -1,0 +1,337 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://synthai.hypo.ai/schemas/literature-discovery-output.json",
+  "title": "Literature Discovery Agent Output Schema",
+  "description": "Structured output from Literature Discovery Agent for handoff to Synthesis Model",
+  "type": "object",
+  "required": ["hypothesis", "variables", "metadata", "success"],
+  "properties": {
+    "success": {
+      "type": "boolean",
+      "description": "Whether variable discovery completed successfully"
+    },
+    "hypothesis": {
+      "type": "string",
+      "description": "Original medical research hypothesis provided by user",
+      "minLength": 10,
+      "examples": [
+        "Does elevated CRP predict cardiovascular events in adults with diabetes?"
+      ]
+    },
+    "variables": {
+      "type": "array",
+      "description": "List of discovered variables (predictors and outcomes)",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/Variable"
+      }
+    },
+    "confounders": {
+      "type": "array",
+      "description": "List of identified confounding variables",
+      "items": {
+        "$ref": "#/definitions/Variable"
+      },
+      "default": []
+    },
+    "relationships": {
+      "type": "array",
+      "description": "Discovered relationships between variables",
+      "items": {
+        "$ref": "#/definitions/Relationship"
+      },
+      "default": []
+    },
+    "papers_analyzed": {
+      "type": "integer",
+      "description": "Number of research papers analyzed",
+      "minimum": 0
+    },
+    "reasoning_chain": {
+      "type": "string",
+      "description": "Chain-of-thought reasoning process from Claude",
+      "examples": [
+        "Analyzed 15 papers. Found consistent evidence that CRP (inflammatory marker) correlates positively with CVD events. Age and BMI identified as confounders..."
+      ]
+    },
+    "search_iterations": {
+      "type": "integer",
+      "description": "Number of iterative search rounds performed",
+      "minimum": 1
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["timestamp", "model"],
+      "properties": {
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp when discovery completed"
+        },
+        "min_variables_target": {
+          "type": "integer",
+          "description": "Target minimum number of variables"
+        },
+        "max_papers_analyzed": {
+          "type": "integer",
+          "description": "Maximum papers limit"
+        },
+        "model": {
+          "type": "object",
+          "properties": {
+            "claude": {
+              "type": "string",
+              "description": "Claude model version used",
+              "examples": ["claude-3-5-sonnet-20240620"]
+            },
+            "bluebert": {
+              "type": "string",
+              "description": "BlueBERT model identifier",
+              "examples": ["bionlp/bluebert_pubmed_mimic_uncased_L-12_H-768_A-12"]
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Variable": {
+      "type": "object",
+      "required": ["name", "type", "role"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Standardized variable name (e.g., 'CRP', 'BMI', 'age')",
+          "minLength": 1,
+          "examples": ["CRP", "age", "BMI", "systolic_bp", "diabetes_duration"]
+        },
+        "type": {
+          "type": "string",
+          "enum": ["continuous", "categorical", "binary", "ordinal", "time-to-event"],
+          "description": "Statistical type of the variable"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["predictor", "outcome", "confounder", "mediator", "moderator"],
+          "description": "Variable's role in the hypothesis"
+        },
+        "relationship": {
+          "type": "string",
+          "enum": ["positive", "negative", "null", "u-shaped", "unknown"],
+          "description": "Relationship direction with outcome",
+          "default": "unknown"
+        },
+        "distribution": {
+          "type": "string",
+          "enum": ["normal", "lognormal", "exponential", "binomial", "poisson", "categorical", "unknown"],
+          "description": "Expected statistical distribution (for synthesis model)",
+          "default": "unknown"
+        },
+        "units": {
+          "type": "string",
+          "description": "Measurement units if applicable",
+          "examples": ["mg/L", "years", "kg/m²", "mmHg"]
+        },
+        "typical_range": {
+          "type": "object",
+          "description": "Typical value range from literature",
+          "properties": {
+            "min": {
+              "type": "number"
+            },
+            "max": {
+              "type": "number"
+            },
+            "mean": {
+              "type": "number"
+            },
+            "sd": {
+              "type": "number"
+            }
+          }
+        },
+        "citations": {
+          "type": "array",
+          "description": "PMIDs or DOIs of supporting papers",
+          "items": {
+            "type": "string",
+            "pattern": "^(PMID:|DOI:).+",
+            "examples": ["PMID:38123456", "DOI:10.1001/jama.2024.12345"]
+          },
+          "minItems": 1
+        },
+        "reasoning": {
+          "type": "string",
+          "description": "Why this variable matters for the hypothesis",
+          "examples": [
+            "CRP is an inflammatory marker consistently associated with cardiovascular risk across multiple cohort studies"
+          ]
+        },
+        "confidence": {
+          "type": "string",
+          "enum": ["high", "medium", "low"],
+          "description": "Confidence level in this variable's relevance",
+          "default": "medium"
+        }
+      }
+    },
+    "Relationship": {
+      "type": "object",
+      "required": ["var1", "var2", "type"],
+      "properties": {
+        "var1": {
+          "type": "string",
+          "description": "First variable name (matches Variable.name)"
+        },
+        "var2": {
+          "type": "string",
+          "description": "Second variable name (matches Variable.name)"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["correlation", "causation", "mediation", "interaction", "confounding"],
+          "description": "Type of relationship"
+        },
+        "direction": {
+          "type": "string",
+          "enum": ["positive", "negative", "bidirectional", "unknown"],
+          "description": "Relationship direction"
+        },
+        "strength": {
+          "type": "string",
+          "enum": ["strong", "moderate", "weak", "unknown"],
+          "description": "Evidence strength for this relationship"
+        },
+        "effect_size": {
+          "type": "object",
+          "description": "Quantitative effect size if available",
+          "properties": {
+            "metric": {
+              "type": "string",
+              "examples": ["HR", "OR", "RR", "correlation", "beta"]
+            },
+            "value": {
+              "type": "number"
+            },
+            "ci_lower": {
+              "type": "number"
+            },
+            "ci_upper": {
+              "type": "number"
+            }
+          }
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reasoning": {
+          "type": "string",
+          "description": "Evidence for this relationship"
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "success": true,
+      "hypothesis": "Does elevated CRP predict cardiovascular events in adults with diabetes?",
+      "variables": [
+        {
+          "name": "CRP",
+          "type": "continuous",
+          "role": "predictor",
+          "relationship": "positive",
+          "distribution": "lognormal",
+          "units": "mg/L",
+          "typical_range": {
+            "min": 0.1,
+            "max": 10.0,
+            "mean": 2.5,
+            "sd": 1.8
+          },
+          "citations": ["PMID:38123456", "PMID:38234567"],
+          "reasoning": "CRP is an inflammatory marker consistently associated with increased cardiovascular risk",
+          "confidence": "high"
+        },
+        {
+          "name": "cardiovascular_events",
+          "type": "binary",
+          "role": "outcome",
+          "relationship": "positive",
+          "distribution": "binomial",
+          "citations": ["PMID:38123456"],
+          "reasoning": "Primary outcome of interest - any CVD event within follow-up period",
+          "confidence": "high"
+        },
+        {
+          "name": "age",
+          "type": "continuous",
+          "role": "confounder",
+          "relationship": "positive",
+          "distribution": "normal",
+          "units": "years",
+          "typical_range": {
+            "min": 40,
+            "max": 80,
+            "mean": 62,
+            "sd": 10
+          },
+          "citations": ["PMID:38234567"],
+          "reasoning": "Age confounds both CRP levels and CVD risk",
+          "confidence": "high"
+        }
+      ],
+      "confounders": [
+        {
+          "name": "BMI",
+          "type": "continuous",
+          "role": "confounder",
+          "relationship": "positive",
+          "distribution": "normal",
+          "units": "kg/m²",
+          "typical_range": {
+            "min": 18.5,
+            "max": 40.0,
+            "mean": 28.5,
+            "sd": 5.2
+          },
+          "citations": ["PMID:38345678"],
+          "reasoning": "BMI affects both inflammation and cardiovascular risk",
+          "confidence": "high"
+        }
+      ],
+      "relationships": [
+        {
+          "var1": "CRP",
+          "var2": "cardiovascular_events",
+          "type": "correlation",
+          "direction": "positive",
+          "strength": "moderate",
+          "effect_size": {
+            "metric": "HR",
+            "value": 1.8,
+            "ci_lower": 1.4,
+            "ci_upper": 2.3
+          },
+          "citations": ["PMID:38123456"],
+          "reasoning": "Meta-analysis shows consistent positive association"
+        }
+      ],
+      "papers_analyzed": 15,
+      "reasoning_chain": "Analyzed 15 papers from PubMed. Found consistent evidence that elevated CRP (>3 mg/L) predicts cardiovascular events in diabetic populations. Age, BMI, and diabetes duration identified as key confounders. Novel insight: CRP effect stronger in patients with poor glycemic control.",
+      "search_iterations": 2,
+      "metadata": {
+        "timestamp": "2025-11-02T04:00:00Z",
+        "min_variables_target": 10,
+        "max_papers_analyzed": 50,
+        "model": {
+          "claude": "claude-3-5-sonnet-20240620",
+          "bluebert": "bionlp/bluebert_pubmed_mimic_uncased_L-12_H-768_A-12"
+        }
+      }
+    }
+  ]
+}

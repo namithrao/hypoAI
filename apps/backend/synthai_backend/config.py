@@ -17,6 +17,9 @@ class Settings(BaseSettings):
     openai_api_key: Optional[str] = Field(default=None, validation_alias="OPENAI_API_KEY")
     anthropic_api_key: Optional[str] = Field(default=None, validation_alias="ANTHROPIC_API_KEY")
 
+    # NCBI E-utilities API Key
+    ncbi_api_key: Optional[str] = Field(default=None, validation_alias="NCBI_API_KEY")
+
     # Contact
     contact_email: Optional[str] = Field(default="research@synthai.ai", validation_alias="CONTACT_EMAIL")
 
