@@ -86,7 +86,6 @@ coverage/
 docker-compose.override.yml
 
 # Data files
-data/
 *.csv
 *.tsv
 *.parquet

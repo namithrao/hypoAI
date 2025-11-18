@@ -1,0 +1,37 @@
+# Data Analysis and NHANES Processing Dependencies
+
+# Core Data Science (compatible versions)
+numpy>=1.24.0,<2.0.0
+pandas>=2.0.0
+scipy>=1.10.0
+torch
+transformers
+scikit-learn
+
+# Visualization
+plotly
+seaborn>=0.12.0
+umap-learn
+
+# Data Format Support
+pyarrow==15.0.0  # For Parquet files
+fastparquet==2024.2.0  # Alternative Parquet engine
+
+# Web Scraping and Downloads
+requests==2.31.0
+beautifulsoup4==4.12.3
+lxml==5.1.0
+
+# Jupyter
+jupyter==1.0.0
+notebook==7.0.8
+ipykernel==6.29.0
+ipywidgets==8.1.1
+
+# Progress bars
+tqdm==4.66.1
+
+anthropic
+
+# Data validation
+great-expectations==0.18.8  # Optional: for data quality checks
