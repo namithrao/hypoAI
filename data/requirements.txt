@@ -35,3 +35,9 @@ anthropic
 
 # Data validation
 great-expectations==0.18.8  # Optional: for data quality checks
+
+# Google Drive Integration (Optional)
+PyDrive2>=1.15.0  # For Google Drive uploads
+google-api-python-client>=2.0.0  # Alternative Google Drive API
+google-auth-httplib2>=0.1.0
+google-auth-oauthlib>=0.5.0

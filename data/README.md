@@ -2,33 +2,63 @@
 
 This directory contains tools for downloading, processing, and analyzing NHANES (National Health and Nutrition Examination Survey) data.
 
-## Available Notebooks
+## Available Tools
 
-1. **[nhanes_data_download.ipynb](nhanes_data_download.ipynb)** - Download and convert NHANES data
-2. **[nhanes_variable_embeddings.ipynb](nhanes_variable_embeddings.ipynb)** - Visualize variables in 3D semantic space
+### Scripts
+1. **[nhanes_data_loader_all_years.py](nhanes_data_loader_all_years.py)** - Download and merge NHANES data from all years
+   - Downloads data for all cycles (1999-2000 through 2017-2018+)
+   - Merges all components (Demographics, Dietary, Examination, Laboratory, Questionnaire) by SEQN
+   - Exports to CSV
+   - Optional Google Drive upload
+   - See [NHANES_DATA_LOADER_GUIDE.md](NHANES_DATA_LOADER_GUIDE.md) for detailed usage
+
+2. **[simple_nhanes_fetcher.py](simple_nhanes_fetcher.py)** - Fetch NHANES variable metadata
+   - Retrieves variable lists and descriptions from CDC website
+   - Does not download actual data (only metadata)
+   - Used by notebooks for variable exploration
+
+### Notebooks
+1. **[nhanes_embedding_simple.ipynb](nhanes_embedding_simple.ipynb)** - BioBERT embeddings & visualization
+   - Loads NHANES 2017-2018 variable metadata
+   - Encodes with BioBERT (biomedical language model)
+   - Creates 2D/3D visualizations with UMAP
+   - Semantic search for similar variables
 
 ## Quick Start
 
-### 1. Install Dependencies
+### Option 1: Download All Years with Data Loader Script (Recommended)
 
 ```bash
+# 1. Install dependencies
 cd data
 pip install -r requirements.txt
+
+# 2. Download and merge all NHANES cycles
+python nhanes_data_loader_all_years.py --output-dir ./nhanes_output --cycles all
+
+# 3. Or download specific years only
+python nhanes_data_loader_all_years.py --output-dir ./nhanes_output --cycles "2017-2018,2015-2016"
 ```
 
-### 2. Run Jupyter Notebook
+**Output:** Merged CSV files in `nhanes_output/` directory, one per cycle, with all components joined by SEQN.
+
+See [NHANES_DATA_LOADER_GUIDE.md](NHANES_DATA_LOADER_GUIDE.md) for complete documentation.
+
+### Option 2: Explore Variables with BioBERT Embeddings
 
 ```bash
-jupyter notebook nhanes_data_download.ipynb
+# 1. Install dependencies (if not already done)
+pip install -r requirements.txt
+
+# 2. Launch Jupyter
+jupyter notebook nhanes_embedding_simple.ipynb
+
+# 3. Run all cells to:
+# - Fetch NHANES 2017-2018 variable metadata
+# - Encode with BioBERT
+# - Visualize in 2D/3D semantic space
+# - Search for similar variables
 ```
-
-### 3. Execute All Cells
-
-Run all cells in the notebook to:
-- Download all NHANES 2017-2018 data files (Demographics, Examination, Laboratory, Questionnaire, Dietary)
-- Convert XPT files to Parquet format for efficient storage
-- Create variable-level Parquet files for flexible data loading
-- Generate visualizations of key variables
 
 ## What the Notebook Does
 
@@ -161,26 +191,22 @@ All NHANES variables follow consistent naming:
 
 ## Variable Embedding Visualization
 
-The [nhanes_variable_embeddings.ipynb](nhanes_variable_embeddings.ipynb) notebook creates interactive 3D visualizations of all NHANES 2017-2018 variables in semantic space.
+The [nhanes_embedding_simple.ipynb](nhanes_embedding_simple.ipynb) notebook creates interactive 2D/3D visualizations of all NHANES 2017-2018 variables in semantic space.
 
 ### What it does:
-- Queries all ~2000-3000 NHANES 2017-2018 variables across all categories
-- Encodes with 2 BioBERT models (Base + Chemical NER)
-- Reduces to 3D using UMAP and t-SNE
-- Creates 5 interactive Plotly visualizations
-- Performs clustering analysis (KMeans + DBSCAN)
-- Supports search, filter, and variable highlighting
+- Fetches all ~2000-3000 NHANES 2017-2018 variables across all categories
+- Encodes variable descriptions with BioBERT (biomedical language model)
+- Reduces to 2D/3D using UMAP for visualization
+- Creates interactive Plotly visualizations
+- Enables semantic search for similar variables
 
 ### Output:
 ```
-nhanes_embeddings/
-├── nhanes_variables_2017_2018.csv       # All variables with metadata
-├── embeddings_base_biobert.npy          # Base BioBERT embeddings
-├── embeddings_chemical_biobert.npy      # Chemical BioBERT embeddings
-├── coords_*.csv                          # 3D coordinates (4 files)
-├── clusters.csv                          # Cluster assignments
-├── viz_*.html                            # Interactive visualizations (5 files)
-└── summary_report.txt                    # Analysis summary
+data/
+├── nhanes_2017_2018_embeddings.npy              # BioBERT embeddings (768-dim)
+├── nhanes_2017_2018_variables_with_coords.csv   # Variables + 2D/3D coordinates
+├── nhanes_2017_2018_variables_3d.html           # Interactive 3D visualization
+└── nhanes_2017_2018_variables_2d.html           # Interactive 2D visualization
 ```
 
 ### Use Cases:
